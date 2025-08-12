@@ -1855,6 +1855,18 @@ PycRef<ASTNode> BuildFromCode(PycRef<PycCode> code, PycModule* mod)
                     PycRef<ASTBlock> prev = curblock;
                     blocks.pop();
                     curblock = blocks.top();
+                    // If there is dead code between raise and the end of the current block:
+                    // TODO: reproducer to add in tests:
+                    // def f():
+                    //     if a:
+                    //         raise Exception
+                    //     else:
+                    //         return True
+                    //     return None
+                    if (prev->end() > pos) {
+                        pos = prev->end();
+                        source.setPos(pos);
+                    }
                     curblock->append(prev.cast<ASTNode>());
                 }
             }
