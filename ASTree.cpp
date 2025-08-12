@@ -853,7 +853,9 @@ PycRef<ASTNode> BuildFromCode(PycRef<PycCode> code, PycModule* mod)
                         curblock = blocks.top();
 
                         /* Turn it into an else statement. */
-                        if (curblock->end() != pos || curblock.cast<ASTContainerBlock>()->hasFinally()) {
+                        if (curblock->end() != pos
+                                || curblock.cast<ASTContainerBlock>()->hasFinally()
+                                || (prev->end() != pos && !curblock.cast<ASTContainerBlock>()->hasFinally())) {
                             PycRef<ASTBlock> elseblk = new ASTBlock(ASTBlock::BLK_ELSE, prev->end());
                             elseblk->init();
                             blocks.push(elseblk);
